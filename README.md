@@ -9,3 +9,13 @@ The tool plots candlestick charts with the following settings:
 - SMA(21)
 - SMA(200)
 - Range Selector (1w, 1m, 6m, 1y, YTD)
+
+### Setup
+Python 3
+
+Jupyter Notebook
+
+Required Libraries:
+- pandas
+- pandas-datareader
+- plotly
