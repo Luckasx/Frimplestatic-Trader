@@ -14,6 +14,8 @@ The data comes from Yahoo!Finance, so you need to search tickers as shown there.
 
 Example: <a href="https://finance.yahoo.com/quote/AAPL/history/" target="_blank">AAPL</a>
 
+Windows users can start it with **start.bat** script.
+
 ### Setup
 Python 3
 
