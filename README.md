@@ -8,3 +8,4 @@ The tool plots candlestick charts with the following settings:
 - SMA(9) - Simple Moving Average 9 periods
 - SMA(21)
 - SMA(200)
+- Range Selector (1w, 1m, 6m, 1y, YTD)
