@@ -53,9 +53,9 @@ def getFigure(acao, start, end):
                         high=df['High'],
                         low=df['Low'],
                         close=df['Close']),
-                        go.Scatter(name="MME9", x=df.Date, y=df.MA9, line=dict(color='white', width=1 )),
-                        go.Scatter(name="MME21",x=df.Date, y=df.MA21, line=dict(color='red', width=1, dash="dash")),
-                        go.Scatter(name="SMA200",x=df.Date, y=df.MA200, line=dict(color='purple', width=1, dash="dash"))
+                        go.Scatter(name="MME9", x=df.Date, y=df.MA9, line=dict(color='white', width=2 )),
+                        go.Scatter(name="MME21",x=df.Date, y=df.MA21, line=dict(color='red', width=2, dash="dash")),
+                        go.Scatter(name="SMA200",x=df.Date, y=df.MA200, line=dict(color='purple', width=2, dash="dash"))
                              ]                       
                        )
         

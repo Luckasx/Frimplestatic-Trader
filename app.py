@@ -2,10 +2,36 @@ import dash_bootstrap_components as dbc
 from dash import dash, dcc, html, Input, Output, State
 from datetime import date
 import common
+import webbrowser
 
 app = dash.Dash(title="Frimplestatic Trader",
                 external_stylesheets=[dbc.themes.LUX])
 
+def getLinks(stock):
+    links = []
+    stock_original = stock.lower().replace(".sa","")
+    
+    ##google
+    links.append(
+            dbc.Col([
+                dcc.Link(html.Img(src="https://www.google.com/favicon.ico", width="24"), target="_blank" , href=f"https://www.google.com/search?q={stock_original}")
+            ], width=1)
+        )
+
+    if(stock.lower().find(".sa") > -1):
+        ###suno
+        links.append(
+             dbc.Col([
+                 dcc.Link(html.Img(src="https://www.suno.com.br/acoes/img/favicon.ico", width="24"), 
+                 href=f"https://www.suno.com.br/acoes/{stock_original}/", target="_blank", title="SUNO", id=f"h{stock_original}")
+             ], width=1))
+
+    row = dbc.Row(
+        [
+            *links
+        ], class_name = "mb-3"
+    )
+    return row
 
 def getCharts(tickers):
     end = date.today().strftime('%m-%d-%Y')
@@ -23,11 +49,13 @@ def getCharts(tickers):
         try:
             if(stock != ""):
                 fig = common.getFigure(stock, start, end)
+                links = getLinks(stock)
                 charts.append(dbc.Row(
                     [
                         html.H2(stock),
+                        links,
                         dcc.Graph(id=f"{stock}", figure=fig)
-                    ]
+                    ], class_name="mt-3"
                 ))
 
         except Exception as exc:
@@ -36,6 +64,8 @@ def getCharts(tickers):
 
     return charts
 
+def clearValue():
+    return ""
 
 def loadApp():
 
@@ -71,6 +101,14 @@ def loadApp():
                                 children=html.Div(id="graphics_div")
                             )],
                         className="mt-3"
+                    ),
+                    dbc.Row
+                    (
+                        dcc.Link(
+                            [
+                                dbc.Button("back to the top", size="lg", className="me-1")
+                            ], href="#my-input", className="mt-3"
+                        )
                     )
                 ],
                 id='main_div',
@@ -80,7 +118,10 @@ def loadApp():
     )
 
     @app.callback(
-        Output(component_id='graphics_div', component_property='children'),
+        [
+            Output(component_id='graphics_div', component_property='children'),
+            Output('my-input', "value")
+        ],
         Input('button_id', 'n_clicks'),
         State('my-input', 'value')
 
@@ -91,7 +132,7 @@ def loadApp():
         tickers = tickers.replace(" ", "")
         tickers = tickers.replace("\s", "")
 
-        return getCharts(tickers)
+        return getCharts(tickers), ""
 
 
 def runApp():
@@ -99,5 +140,7 @@ def runApp():
 
 
 if __name__ == '__main__':
+    # webbrowser.open("http://localhost:8050")
     runApp()
     app.run_server(debug=True)
+    
