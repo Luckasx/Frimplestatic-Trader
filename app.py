@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import dash, dcc, html, Input, Output, State
+from dash import dash, dcc, html, Input, Output, State, MATCH
 from datetime import date
 import common
 import webbrowser
@@ -20,20 +20,51 @@ def getLinks(stock):
 
     if(stock.lower().find(".sa") > -1):
         ###suno
-        links.append(
-             dbc.Col([
+        links.append(             
                  dcc.Link(html.Img(src="https://www.suno.com.br/acoes/img/favicon.ico", width="24"), 
-                 href=f"https://www.suno.com.br/acoes/{stock_original}/", target="_blank", title="SUNO", id=f"h{stock_original}")
-             ], width=1))
+                 href=f"https://www.suno.com.br/acoes/{stock_original}/", target="_blank", title="SUNO", id=f"h{stock_original}"))
+             
 
     row = dbc.Row(
         [
             *links
         ], class_name = "mb-3"
     )
-    return row
+    return links
 
-def getCharts(tickers):
+def buildChart(stock, start, end):
+    fig, data = common.getFigure(stock, start, end)
+    links = getLinks(stock)
+    return (dbc.Row(
+        [
+            
+            dbc.Col(
+                children=[
+                    dbc.Card(
+                        [
+                            dbc.CardBody(
+
+                            children=[
+                                    html.H2(stock),                                 
+                                    *links
+                                    
+                            ]
+                            )
+                        ]
+                    )                                
+                ], width=12
+            ),
+            
+            dbc.Col(children=[
+                dcc.Graph(id={'type':"chart-candle", 'index':f"{stock}"}, figure=fig)
+            ], width=12
+            )
+            
+        ], class_name="mt-3"
+    ))
+
+def getCharts(tickers):    
+
     end = date.today().strftime('%m-%d-%Y')
 
     start = common.getEndDate("m", 36)
@@ -41,26 +72,20 @@ def getCharts(tickers):
     charts = []
 
     if(tickers == ""):
-        tickers = "AAPL;PETR3.SA"
+        tickers = "ABEV3.SA;egie3.sa;flry3.sa;tupy3.sa;wege3.sa"        
 
     stocks = tickers.split(sep=";")
 
     for stock in stocks:
         try:
             if(stock != ""):
-                fig = common.getFigure(stock, start, end)
-                links = getLinks(stock)
-                charts.append(dbc.Row(
-                    [
-                        html.H2(stock),
-                        links,
-                        dcc.Graph(id=f"{stock}", figure=fig)
-                    ], class_name="mt-3"
-                ))
+                c = buildChart(stock, start, end)
+                charts.append(c)
 
         except Exception as exc:
             charts.append(
-                dbc.Alert(f"Couldn't find historical for {stock}", color="primary"))
+                dbc.Alert(f"Couldn't find historical for {stock} " , color="primary"))
+            
 
     return charts
 
@@ -78,7 +103,7 @@ def loadApp():
         html.Div([
             html.Div(
                 [
-                    html.H1("Frimplestatic Trader (Free, Simple and Static)"),
+                    html.H1("Frimplestatic Trader (Free, Simple and Static)"),                 
                     dbc.Row(
                         [
                             dbc.Col(children=[
@@ -132,7 +157,47 @@ def loadApp():
         tickers = tickers.replace(" ", "")
         tickers = tickers.replace("\s", "")
 
-        return getCharts(tickers), ""
+        charts = getCharts(tickers)
+
+        return charts , ""
+
+
+    # @app.callback(
+    #     Output({'type':'chart_data', 'index': MATCH}, "children"),
+    #     [Input({'type':'chart-candle', 'index':MATCH}, 'hoverData')],
+    #      State({'type': 'chart-candle', 'index': MATCH}, 'id'),
+    #     )
+    # def update_y_timeseries(hoverData, id):
+    #     stock = (id.get("index"))
+
+    #     print(hoverData)
+        
+    #     data = hoverData["points"]
+        
+    #     try:
+    #         data = common.filterData(data, 'curveNumber', 0)
+
+    #         cardBody = [ dbc.Badge("Open", className="ms-1"), 
+    #                 html.Label(data["open"]),
+    #                 dbc.Badge("Close", className="ms-1"),
+    #                 html.Label(data["close"]),
+    #                 dbc.Badge("Low", className="ms-1"), 
+    #                 html.Label(data["low"]),
+    #                 dbc.Badge("High", className="ms-1"),
+    #                 html.Label(data["high"]),
+    #                 dbc.Badge("Date", className="ms-1"), 
+    #                 # html.Label(data["date"])
+    #     ]
+    #     except Exception as err:
+    #         print(err)
+
+        
+
+        
+
+    #     print(cardBody)
+
+    #     return cardBody
 
 
 def runApp():

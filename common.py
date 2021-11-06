@@ -42,7 +42,11 @@ def getData(acao,start, end):
 
 #    display(df)
     
-    
+def filterData(data, columnName, columnValue):
+    dt = data
+    dt = filter(lambda c:   c[columnName] == columnValue, data)
+    return list(dt)[0]
+
 def getFigure(acao, start, end):
     try:
         df = getData(acao, start, end)
@@ -111,7 +115,8 @@ def getFigure(acao, start, end):
      
         fig.update_layout(hoverdistance=10)
         fig.update_layout(hovermode="x")
-        return fig
+        return fig, df
+
     except Exception as exc:
         raise exc
 
