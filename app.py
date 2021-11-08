@@ -12,23 +12,35 @@ def getLinks(stock):
     stock_original = stock.lower().replace(".sa","")
     
     ##google
-    links.append(
-            dbc.Col([
-                dcc.Link(html.Img(src="https://www.google.com/favicon.ico", width="24"), target="_blank" , href=f"https://www.google.com/search?q={stock_original}")
-            ], width=1)
+    links.append(            
+                dcc.Link(html.Img(src="https://www.google.com/favicon.ico", width="24"), 
+                target="_blank" , 
+                href=f"https://www.google.com/search?q={stock_original}" , 
+                className="ms-3")            
         )
 
     if(stock.lower().find(".sa") > -1):
         ###suno
         links.append(             
                  dcc.Link(html.Img(src="https://www.suno.com.br/acoes/img/favicon.ico", width="24"), 
-                 href=f"https://www.suno.com.br/acoes/{stock_original}/", target="_blank", title="SUNO", id=f"h{stock_original}"))
+                 href=f"https://www.suno.com.br/acoes/{stock_original}/", 
+                 target="_blank", 
+                 title="SUNO", 
+                 id=f"suno_{stock_original}" , 
+                 className="ms-3"))        
+        links.append(             
+                 dcc.Link(html.Img(src="https://statusinvest.com.br/img/favicon/favicon-32x32.png", width="24"), 
+                 href=f"https://statusinvest.com.br/acoes/{stock_original}/", 
+                 target="_blank", 
+                 title="Status Invest", 
+                 id=f"status_{stock_original}" , 
+                 className="ms-3"))
              
 
     row = dbc.Row(
         [
             *links
-        ], class_name = "mb-3"
+        ], className = "mb-3 input-group"
     )
     return links
 
@@ -73,6 +85,7 @@ def getCharts(tickers):
 
     if(tickers == ""):
         tickers = "ABEV3.SA;egie3.sa;flry3.sa;tupy3.sa;wege3.sa"        
+        # tickers = "ABEV3.sa"
 
     stocks = tickers.split(sep=";")
 
@@ -103,27 +116,43 @@ def loadApp():
         html.Div([
             html.Div(
                 [
-                    html.H1("Frimplestatic Trader (Free, Simple and Static)"),                 
+                    html.H1("Frimplestatic Trader (Free, Simple and Static)",className="mt-3 text-center"),                 
                     dbc.Row(
                         [
                             dbc.Col(children=[
+                                html.Div(
+                                children=[dbc.Input(
+                                    autocomplete="off", id='my-input', 
+                                    placeholder='Search Tickers', 
+                                    size="md", 
+                                    type='text', 
+                                    value="",
+                                    className="form-control"
+                                    ),
+                                html.Div(    
+                                children=[dbc.Button("Load Charts",
+                                           id='button_id', className="")
+                                ], className="input-group-append"
+                                )
+                                
 
-                                dbc.Input(
-                                    autocomplete="off", id='my-input', placeholder='Search Tickers', size="md", type='text', value=""),
-                                dbc.Button("Load Charts",
-                                           id='button_id', className="mt-3")
-
-                            ]
+                            ], className="input-group"
                             )
-                        ]
-                    ),
+                        ], width={"size":6, "offset":"3"}
+                    )], className="mt-2"),
                     dbc.Row(
                         [
                             dcc.Loading(
+                                color="orange",
                                 id="loading-1",
                                 fullscreen=False,
+
                                 type="cube",
-                                children=html.Div(id="graphics_div")
+                                children=html.Div(id="graphics_div"),
+                                style={                                    
+                                    "position":"absolute",
+                                    "top":"20px"
+                                }
                             )],
                         className="mt-3"
                     ),
