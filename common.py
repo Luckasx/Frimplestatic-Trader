@@ -52,14 +52,16 @@ def getFigure(acao, start, end):
         df = getData(acao, start, end)
         
     
-        fig = go.FigureWidget(data=[go.Candlestick(x=df['Date'],
+        fig = go.FigureWidget(data=[
+            go.Scatter(name="MME9", x=df.Date, y=df.MA9, line=dict(color='white', width=2 )),
+                        go.Scatter(name="MME21",x=df.Date, y=df.MA21, line=dict(color='red', width=2, dash="dash")),
+                        go.Scatter(name="SMA200",x=df.Date, y=df.MA200, line=dict(color='purple', width=2, dash="dash")),
+                        go.Candlestick(x=df['Date'],
                         open=df['Open'],
                         high=df['High'],
                         low=df['Low'],
                         close=df['Close']),
-                        go.Scatter(name="MME9", x=df.Date, y=df.MA9, line=dict(color='white', width=2 )),
-                        go.Scatter(name="MME21",x=df.Date, y=df.MA21, line=dict(color='red', width=2, dash="dash")),
-                        go.Scatter(name="SMA200",x=df.Date, y=df.MA200, line=dict(color='purple', width=2, dash="dash"))
+                        
                              ]                       
                        )
         
@@ -101,6 +103,9 @@ def getFigure(acao, start, end):
                 rangeslider=dict(
                     visible= False 
                 ),
+                showspikes=False,
+                spikemode="across",
+                spikesnap="cursor",
                 type="date"
             ),
 #             paper_bgcolor="LightSteelBlue",
@@ -110,7 +115,9 @@ def getFigure(acao, start, end):
             title=f'{acao} {start} {end}',
             font_family="Arial Black",                      
             legend_title_font_color="green",
-            yaxis = dict(fixedrange = False,autorange= True, side="right", tickformat = ".2f"),         
+            
+            yaxis = dict(fixedrange = False,autorange= True, side="right", tickformat = ".2f",showspikes=False,
+                spikemode="across"         )
         )
      
         fig.update_layout(hoverdistance=10)
